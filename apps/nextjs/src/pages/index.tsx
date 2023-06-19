@@ -8,6 +8,7 @@ import type { AppRouter } from "@acme/api";
 import Link from "next/link";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 // Components
 // ========================================================
@@ -16,15 +17,23 @@ import { useState } from "react";
  * @returns 
  */
 const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { } }) => {
+  // State / Props
   const [inputs, setInputs] = useState({
     title: '',
     content: ''
   });
   const { user, error, isLoading } = useUser();
+  // Requests
+  /**
+   * 
+   */
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
     undefined,
     { enabled: !!user },
   );
+  /**
+   * 
+   */
   const postCreate = trpc.post.create.useMutation({
     onSuccess: () => {
       if (callback) {
@@ -34,10 +43,18 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
   });
 
   // Functions
+  /**
+   * 
+   * @param event 
+   */
   const onSubmitFormNewPost = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      postCreate.mutateAsync(inputs);
+      toast.promise(postCreate.mutateAsync(inputs), {
+        loading: 'Creating Post...',
+        success: 'Post Created!',
+        error: 'Error Creating Post',
+      });
       setInputs({ title: '', content: '' });
     } catch (error) {
       console.error({ error });
@@ -117,8 +134,12 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter["post"]["all"]>[number];
   onClick?: (id: string) => void;
-}> = ({ post, onClick }) => {
+  isDisabled?: boolean;
+}> = ({ post, onClick, isDisabled = false }) => {
   // Functions
+  /**
+   * Deletes a post if callback is defined
+   */
   const onClickDelete = () => {
     if (onClick) {
       onClick(post.id);
@@ -132,7 +153,7 @@ const PostCard: React.FC<{
         <h3 className="mb-0">{post.title}</h3>
         <p className="mb-0">{post.content}</p>
       </div>
-      {onClick ? <button onClick={onClickDelete} className="absolute group-hover:block hidden -top-4 -right-4 leading-8 px-3">&times;</button> : null}
+      {onClick || !isDisabled ? <button onClick={onClickDelete} className="absolute group-hover:block hidden -top-4 -right-4 leading-8 px-3">&times;</button> : null}
     </div>
   );
 };
@@ -190,9 +211,13 @@ const Home: NextPage = () => {
           {postQuery.data ? (
             <div className="flex gap-4 p-8 bg-zinc-950/50 rounded-lg">
               {postQuery.data?.map((p) => {
-                return <PostCard key={p.id} post={p} onClick={user ? async (id) => {
+                return <PostCard key={p.id} post={p} isDisabled={isLoading} onClick={user ? async (id) => {
                   try {
-                    await postDelete.mutateAsync(id);
+                    toast.promise(postDelete.mutateAsync(id), {
+                      loading: 'Deleting post...',
+                      success: 'Post deleted!',
+                      error: 'Error deleting post',
+                    });
                   } catch (error) {
                     console.error({ error });
                   }
@@ -203,6 +228,38 @@ const Home: NextPage = () => {
             <p>Loading..</p>
           )}
         </div>
+
+        <hr />
+
+        <h2>Posts Table</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Content</th>
+            </tr>
+          </thead>
+          <tbody>
+            {postQuery.data?.map((p) => {
+              return (
+                <tr key={p.id}>
+                  <td>{p.id}</td>
+                  <td>{p.title}</td>
+                  <td>{p.content}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={3}>
+                No results.
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </main>
     </>
   );

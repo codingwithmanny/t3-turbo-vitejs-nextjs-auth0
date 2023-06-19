@@ -95,7 +95,6 @@ importers:
       '@acme/api': '*'
       '@acme/db': '*'
       '@acme/tailwind-config': '*'
-      '@acme/ui': workspace:^0.0.0
       '@clerk/nextjs': ^4.11.0
       '@tanstack/react-query': ^4.16.1
       '@trpc/client': ^10.1.0
@@ -114,6 +113,7 @@ importers:
       postcss: ^8.4.19
       react: 18.2.0
       react-dom: 18.2.0
+      react-hot-toast: ^2.4.1
       tailwindcss: ^3.2.4
       typescript: ^4.9.3
       zod: ^3.18.0
@@ -121,7 +121,6 @@ importers:
       '@acme/api': link:../../packages/api
       '@acme/db': link:../../packages/db
       '@acme/tailwind-config': link:../../packages/config/tailwind
-      '@acme/ui': link:../../packages/ui
       '@clerk/nextjs': 4.21.1_ugijpnqf6lbyhti4zqjsnggl3q
       '@tanstack/react-query': 4.29.13_biqbaboplfbrettd7655fr4n2y
       '@trpc/client': 10.30.0_@trpc+server@10.30.0
@@ -132,6 +131,7 @@ importers:
       next: 13.4.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-hot-toast: 2.4.1_biqbaboplfbrettd7655fr4n2y
       zod: 3.21.4
     devDependencies:
       '@types/cors': 2.8.13
@@ -149,7 +149,6 @@ importers:
     specifiers:
       '@acme/api': workspace:*
       '@acme/tailwind-config': workspace:*
-      '@acme/ui': workspace:*
       '@auth0/auth0-react': ^2.1.1
       '@headlessui/react': ^1.7.15
       '@tanstack/react-query': ^4.16.1
@@ -175,7 +174,6 @@ importers:
     dependencies:
       '@acme/api': link:../../packages/api
       '@acme/tailwind-config': link:../../packages/config/tailwind
-      '@acme/ui': link:../../packages/ui
       '@auth0/auth0-react': 2.1.1_biqbaboplfbrettd7655fr4n2y
       '@headlessui/react': 1.7.15_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query': 4.29.13_biqbaboplfbrettd7655fr4n2y

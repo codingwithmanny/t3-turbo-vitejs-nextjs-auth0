@@ -5,6 +5,7 @@ import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "@acme/api";
 import { useState } from "react";
 import trpc from '../../utils/trpc';
+import { toast } from "react-hot-toast";
 
 // Components
 // ========================================================
@@ -13,16 +14,25 @@ import trpc from '../../utils/trpc';
  * @returns 
  */
 const AuthShowcase: React.FC<{ callback?: () => void, isDisabled?: boolean; }> = ({ callback = () => { }, isDisabled = false }) => {
+  // State / Props
   const [inputs, setInputs] = useState({
     title: '',
     content: ''
   });
-  // const { user, isAuthenticated, isLoading, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0();
   const { user, error, isLoading, loginWithRedirect, logout } = useAuth0();
+
+  // Requests
+  /**
+   * 
+   */
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
     undefined,
     { enabled: !!user },
   );
+
+  /**
+   * 
+   */
   const postCreate = trpc.post.create.useMutation({
     onSuccess: () => {
       if (callback) {
@@ -35,7 +45,11 @@ const AuthShowcase: React.FC<{ callback?: () => void, isDisabled?: boolean; }> =
   const onSubmitFormNewPost = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      postCreate.mutateAsync(inputs);
+      toast.promise(postCreate.mutateAsync(inputs), {
+        loading: 'Creating Post...',
+        success: 'Post Created!',
+        error: 'Error Creating Post',
+      });
       setInputs({ title: '', content: '' });
     } catch (error) {
       console.error({ error });
@@ -130,11 +144,19 @@ const PostCard: React.FC<{
 
   // Render
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg relative group hover:border-zinc-400 hover:shadow-[0px_0px_0px_2px_rgba(161,161,170,1)] transition-all ease-in-out duration-200">
-      <div className="p-6">
-        <h3 className="mb-0">{post.title}</h3>
+    <div className="card group ring-4 ring-transparent hover:ring-zinc-400 hover:border-transparent  transition-all ease-in-out duration-200">
+      {/* <div className="card-image">
+        <img src="https://picsum.photos/seed/picsum/300/120" alt="Placeholder" />
+      </div> */}
+      <div className="card-header !border-b-0 !pb-0">
+        <h3 className="card-title mb-0">{post.title}</h3>
+      </div>
+      <div className="card-body !border-b-0">
         <p className="mb-0">{post.content}</p>
       </div>
+      {/* <div className="card-footer">
+        <p className="mb-0">Here is the footer</p>
+      </div> */}
       {onClick && !isDisabled ? <button onClick={onClickDelete} className="absolute group-hover:block hidden -top-4 -right-4 leading-8 px-3">&times;</button> : null}
     </div>
   );
@@ -189,13 +211,17 @@ const Home = () => {
 
         <h2>Posts</h2>
 
-        <div className="flex overflow-y-scroll">
+        <div className="flex overflow-y-scroll mb-8">
           {postQuery.data ? (
             <div className="flex gap-4 p-8 bg-zinc-950/50 rounded-lg">
               {postQuery.data?.map((p) => {
                 return <PostCard key={p.id} post={p} isDisabled={isLoading} onClick={user ? async (id) => {
                   try {
-                    await postDelete.mutateAsync(id);
+                    toast.promise(postDelete.mutateAsync(id), {
+                      loading: 'Deleting Post...',
+                      success: 'Post Deleted!',
+                      error: 'Error Deleting Post',
+                    });
                   } catch (error) {
                     console.error({ error });
                   }
@@ -206,6 +232,38 @@ const Home = () => {
             <p>Loading..</p>
           )}
         </div>
+
+        <hr />
+
+        <h2>Posts Table</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Content</th>
+            </tr>
+          </thead>
+          <tbody>
+            {postQuery.data?.map((p) => {
+              return (
+                <tr key={p.id}>
+                  <td>{p.id}</td>
+                  <td>{p.title}</td>
+                  <td>{p.content}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={3}>
+                No results.
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </main>
     </>
   );

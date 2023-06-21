@@ -8,9 +8,7 @@ import { setToken } from "../trpc";
 // ========================================================
 const MiddlewareProvider = ({ children }: { children: React.ReactNode }) => {
   // State / Props
-  const { user, isAuthenticated, isLoading, logout, loginWithRedirect, getAccessTokenSilently } = useAuth0();
-
-  console.log({ isLoading })
+  const { user, isAuthenticated, isLoading, loginWithRedirect, getAccessTokenSilently } = useAuth0();
 
   // Hooks
   useEffect(() => {
@@ -21,6 +19,7 @@ const MiddlewareProvider = ({ children }: { children: React.ReactNode }) => {
         setToken(token);
       } catch (error) {
         console.error({ error });
+        // Uncomment if you want the user to be redirected automatically
         // loginWithRedirect({
         //   appState: {
         //     returnTo: `${window.location.pathname}`
@@ -31,6 +30,8 @@ const MiddlewareProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Render
+  // - Replace this code if you want the user to be authenticated to access the page
+  // if (isLoading || !isAuthenticated) return <><main><div className="p-8"><p>Loading...</p></div></main></>
   if (isLoading) return <><main><div className="p-8"><p>Loading...</p></div></main></>
 
   // Render

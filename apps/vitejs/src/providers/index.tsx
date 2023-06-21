@@ -1,11 +1,11 @@
 // Imports
 // ========================================================
+import { Toaster } from "react-hot-toast";
 import QueryProvider from "./query";
 import TRPCProvider from "./trpc";
 import RouterProvider from "./router";
 import AuthProvider from "./auth";
 import MiddlewareProvider from "./middleware";
-import { Toaster } from "react-hot-toast";
 import MobileProvider from "./mobile";
 
 // Root Provider

@@ -40,7 +40,7 @@ const getBaseUrl = () => {
   const localhost = window.location.host.split(":")[0];
   if (!localhost)
     throw new Error("failed to get localhost, configure it manually");
-  return `${window.location.protocol}//${localhost}:3000`;
+  return `${window.location.protocol}//${localhost}:3000/api/trpc`;
 };
 
 /**
@@ -56,7 +56,7 @@ const trpcClient = trpc.createClient({
       //     Authorization: authToken ?? undefined,
       //   };
       // },
-      url: `${getBaseUrl()}/api/trpc`,
+      url: `${getBaseUrl()}`,
       headers() {
         return {
           Authorization: token ? `Bearer ${token}` : "",

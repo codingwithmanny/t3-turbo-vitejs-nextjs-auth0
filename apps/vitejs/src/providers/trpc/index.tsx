@@ -1,28 +1,37 @@
 // Imports
 // ========================================================
 // import { httpBatchLink } from '@trpc/client';
-import trpc from '../../utils/trpc';
+import trpc from "../../utils/trpc";
 import { httpBatchLink } from "@trpc/client";
 import { transformer } from "@acme/api/transformer";
-import { queryClient } from '../query';
+import { queryClient } from "../query";
 
 // Config
 // ========================================================
 let token: string;
 
 /**
- * 
- * @param newToken 
+ *
+ * @param newToken
  */
 const setToken = (newToken: string) => {
   token = newToken;
 };
 
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 const getBaseUrl = () => {
+  /**
+   * if enviorment variable is set, use it
+   */
+  if (import.meta.env.VITE_TRPC_SERVER_URL || window.TRPC_SERVER_URL)
+    return (
+      import.meta.env.VITE_TRPC_SERVER_URL ||
+      window.TRPC_SERVER_URL.replace(/'/g, "")
+    );
+  /**
   /**
    * Gets the IP address of your host-machine. If it cannot automatically find it,
    * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
@@ -31,12 +40,11 @@ const getBaseUrl = () => {
   const localhost = window.location.host.split(":")[0];
   if (!localhost)
     throw new Error("failed to get localhost, configure it manually");
-  return `http://${localhost}:3000`;
+  return `${window.location.protocol}//${localhost}:3000`;
 };
 
-
 /**
- * 
+ *
  */
 const trpcClient = trpc.createClient({
   transformer,
@@ -51,8 +59,8 @@ const trpcClient = trpc.createClient({
       url: `${getBaseUrl()}/api/trpc`,
       headers() {
         return {
-          Authorization: token ? `Bearer ${token}` : ''
-        }
+          Authorization: token ? `Bearer ${token}` : "",
+        };
       },
       // fetch(url, options) {
       //   return fetch(url, {
@@ -86,12 +94,14 @@ const trpcClient = trpc.createClient({
 // Provider
 // ========================================================
 const TRPCProvider = ({ children }: { children: React.ReactNode }) => {
-  return <trpc.Provider client={trpcClient} queryClient={queryClient}>{children}</trpc.Provider>
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      {children}
+    </trpc.Provider>
+  );
 };
 
 // Exports
 // ========================================================
 export default TRPCProvider;
-export {
-  setToken
-};
+export { setToken };

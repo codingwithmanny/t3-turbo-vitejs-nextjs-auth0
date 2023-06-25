@@ -2,32 +2,20 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "db-generate": {
-      "inputs": [
-        "prisma/schema.prisma"
-      ],
+      "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
     "db-push": {
-      "inputs": [
-        "prisma/schema.prisma"
-      ],
+      "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
     "dev": {
-      "dependsOn": [
-        "^db-generate"
-      ],
+      "dependsOn": ["^db-generate"],
       "cache": false
     },
     "build": {
-      "dependsOn": [
-        "^build",
-        "^db-generate"
-      ],
-      "outputs": [
-        ".next/**",
-        ".expo/**"
-      ]
+      "dependsOn": ["^build", "^db-generate"],
+      "outputs": [".next/**", ".expo/**"]
     },
     "lint": {
       "outputs": []
@@ -39,15 +27,15 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": [
-        "^db-generate"
-      ],
+      "dependsOn": ["^db-generate"],
       "cache": false
     }
   },
   "globalEnv": [
     "DATABASE_URL",
     "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
-    "AUTH0_SECRET"
+    "AUTH0_SECRET",
+    "AUTH0_AUDIENCE",
+    "TRPC_SERVER_URL"
   ]
 }

@@ -6,56 +6,58 @@ import { trpc } from "../utils/trpc";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "@acme/api";
 import Link from "next/link";
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 // Components
 // ========================================================
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
-const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { } }) => {
+const AuthShowcase: React.FC<{ callback?: () => void }> = ({
+  callback = () => {},
+}) => {
   // State / Props
   const [inputs, setInputs] = useState({
-    title: '',
-    content: ''
+    title: "",
+    content: "",
   });
   const { user, error, isLoading } = useUser();
   // Requests
   /**
-   * 
+   *
    */
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
     undefined,
     { enabled: !!user },
   );
   /**
-   * 
+   *
    */
   const postCreate = trpc.post.create.useMutation({
     onSuccess: () => {
       if (callback) {
         callback();
       }
-    }
+    },
   });
 
   // Functions
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    */
   const onSubmitFormNewPost = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       toast.promise(postCreate.mutateAsync(inputs), {
-        loading: 'Creating Post...',
-        success: 'Post Created!',
-        error: 'Error Creating Post',
+        loading: "Creating Post...",
+        success: "Post Created!",
+        error: "Error Creating Post",
       });
-      setInputs({ title: '', content: '' });
+      setInputs({ title: "", content: "" });
     } catch (error) {
       console.error({ error });
     }
@@ -63,32 +65,55 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
 
   // Render
   /**
-   * 
+   *
    */
-  if (isLoading) return <div><code>Loading...</code></div>;
+  if (isLoading)
+    return (
+      <div>
+        <code>Loading...</code>
+      </div>
+    );
 
   /**
-   * 
+   *
    */
-  if (error) return <div><code>{JSON.stringify(error)}</code></div>;
+  if (error)
+    return (
+      <div>
+        <code>{JSON.stringify(error)}</code>
+      </div>
+    );
 
   /**
-   * 
+   *
    */
   return (
     <div className="">
       {user && (
         <>
-          <pre><code>{secretMessage ? secretMessage : null}</code></pre>
+          <pre>
+            <code>{secretMessage ? secretMessage : null}</code>
+          </pre>
 
           <hr />
 
           <div>
             <div>
               <h2>Authenticated User</h2>
-              <pre><code>{JSON.stringify({ user }, null, ' ')}</code></pre>
-              <p>Welcome <span className="bg-black/30 px-3 py-2 rounded ml-2">{user.name}</span></p>
-              <p><a type="button" href="/api/auth/logout">Logout</a></p>
+              <pre>
+                <code>{JSON.stringify({ user }, null, " ")}</code>
+              </pre>
+              <p>
+                Welcome{" "}
+                <span className="ml-2 rounded bg-black/30 px-3 py-2">
+                  {user.name}
+                </span>
+              </p>
+              <p>
+                <a type="button" href="/api/auth/logout">
+                  Logout
+                </a>
+              </p>
             </div>
           </div>
 
@@ -100,15 +125,41 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
             <form onSubmit={onSubmitFormNewPost}>
               <div className="mb-4">
                 <label htmlFor="title">Title</label>
-                <input required className="w-full max-w-lg" id="title" name="title" type="text" value={inputs.title} placeholder="Ex: My Post Title" onChange={(e) => {
-                  setInputs((existing) => ({ ...existing, title: e.target.value }))
-                }} />
+                <input
+                  required
+                  className="w-full max-w-lg"
+                  id="title"
+                  name="title"
+                  type="text"
+                  value={inputs.title}
+                  placeholder="Ex: My Post Title"
+                  onChange={(e) => {
+                    setInputs((existing) => ({
+                      ...existing,
+                      title: e.target.value,
+                    }));
+                  }}
+                />
               </div>
               <div className="mb-4">
-                <label className="block mb-2" htmlFor="content">Content</label>
-                <input required className="w-full max-w-lg" id="content" name="content" type="text" value={inputs.content} placeholder="Ex: Here is my message" onChange={(e) => {
-                  setInputs((existing) => ({ ...existing, content: e.target.value }))
-                }} />
+                <label className="mb-2 block" htmlFor="content">
+                  Content
+                </label>
+                <input
+                  required
+                  className="w-full max-w-lg"
+                  id="content"
+                  name="content"
+                  type="text"
+                  value={inputs.content}
+                  placeholder="Ex: Here is my message"
+                  onChange={(e) => {
+                    setInputs((existing) => ({
+                      ...existing,
+                      content: e.target.value,
+                    }));
+                  }}
+                />
               </div>
               <div>
                 <button type="submit">Submit</button>
@@ -119,7 +170,9 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
       )}
       {!user && (
         <p>
-          <Link type="button" href="/api/auth/login">Login</Link>
+          <Link type="button" href="/api/auth/login">
+            Login
+          </Link>
         </p>
       )}
     </div>
@@ -127,9 +180,9 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback = () => { 
 };
 
 /**
- * 
- * @param param0 
- * @returns 
+ *
+ * @param param0
+ * @returns
  */
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter["post"]["all"]>[number];
@@ -148,19 +201,26 @@ const PostCard: React.FC<{
 
   // Render
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg relative group hover:border-zinc-400 hover:shadow-[0px_0px_0px_2px_rgba(161,161,170,1)] transition-all ease-in-out duration-200">
+    <div className="group relative rounded-lg border border-zinc-700 bg-zinc-900 transition-all duration-200 ease-in-out hover:border-zinc-400 hover:shadow-[0px_0px_0px_2px_rgba(161,161,170,1)]">
       <div className="p-6">
         <h3 className="mb-0">{post.title}</h3>
         <p className="mb-0">{post.content}</p>
       </div>
-      {onClick || !isDisabled ? <button onClick={onClickDelete} className="absolute group-hover:block hidden -top-4 -right-4 leading-8 px-3">&times;</button> : null}
+      {onClick || !isDisabled ? (
+        <button
+          onClick={onClickDelete}
+          className="absolute -right-4 -top-4 hidden px-3 leading-8 group-hover:block"
+        >
+          &times;
+        </button>
+      ) : null}
     </div>
   );
 };
 
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 const Home: NextPage = () => {
   // State / Props
@@ -168,23 +228,24 @@ const Home: NextPage = () => {
 
   // Requests
   /**
-   * 
+   *
    */
   const postQuery = trpc.post.all.useQuery();
 
   /**
-   * 
+   *
    */
   const postDelete = trpc.post.delete.useMutation({
     onSuccess: () => {
       postQuery.refetch();
-    }
+    },
   });
 
   /**
-   * 
+   *
    */
-  const isLoading = postQuery.isLoading || postDelete.isLoading || postQuery.isFetching;
+  const isLoading =
+    postQuery.isLoading || postDelete.isLoading || postQuery.isFetching;
 
   // Render
   return (
@@ -194,12 +255,17 @@ const Home: NextPage = () => {
         <meta name="description" content="Generated by create-t3-app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="px-8 pt-8 pb-14">
+      <main className="px-8 pb-14 pt-8">
         <h1>Create T3 NextJS Pages Auth0</h1>
 
         <hr />
 
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam pariatur perferendis dignissimos voluptatibus in quo odit officia voluptates animi dolor numquam, inventore, quae cumque ratione eveniet blanditiis libero sit et.</p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam
+          pariatur perferendis dignissimos voluptatibus in quo odit officia
+          voluptates animi dolor numquam, inventore, quae cumque ratione eveniet
+          blanditiis libero sit et.
+        </p>
 
         <AuthShowcase callback={() => postQuery.refetch()} />
 
@@ -207,21 +273,32 @@ const Home: NextPage = () => {
 
         <h2>Posts</h2>
 
-        <div className="flex overflow-y-scroll">
+        <div className="mb-8 flex overflow-y-scroll">
           {postQuery.data ? (
-            <div className="flex gap-4 p-8 bg-zinc-950/50 rounded-lg">
+            <div className="flex gap-4 rounded-lg bg-zinc-950/50 p-8">
               {postQuery.data?.map((p) => {
-                return <PostCard key={p.id} post={p} isDisabled={isLoading} onClick={user ? async (id) => {
-                  try {
-                    toast.promise(postDelete.mutateAsync(id), {
-                      loading: 'Deleting post...',
-                      success: 'Post deleted!',
-                      error: 'Error deleting post',
-                    });
-                  } catch (error) {
-                    console.error({ error });
-                  }
-                } : undefined} />;
+                return (
+                  <PostCard
+                    key={p.id}
+                    post={p}
+                    isDisabled={isLoading}
+                    onClick={
+                      user
+                        ? async (id) => {
+                            try {
+                              toast.promise(postDelete.mutateAsync(id), {
+                                loading: "Deleting post...",
+                                success: "Post deleted!",
+                                error: "Error deleting post",
+                              });
+                            } catch (error) {
+                              console.error({ error });
+                            }
+                          }
+                        : undefined
+                    }
+                  />
+                );
               })}
             </div>
           ) : (
@@ -254,9 +331,7 @@ const Home: NextPage = () => {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={3}>
-                No results.
-              </td>
+              <td colSpan={3}>No results.</td>
             </tr>
           </tfoot>
         </table>

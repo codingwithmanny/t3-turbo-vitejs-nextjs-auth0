@@ -6,6 +6,8 @@
     "build": "turbo build",
     "clean": "rm -rf node_modules",
     "clean:workspaces": "turbo clean",
+    "db-up": "docker compose -p t3 up -d ",
+    "db-down": "docker compose -p t3 down --remove-orphans -v",
     "db-generate": "turbo db-generate",
     "db-push": "turbo db-push",
     "dev": "turbo dev --parallel",
@@ -28,5 +30,8 @@
     "patchedDependencies": {
       "react-native@0.70.5": "patches/react-native@0.70.5.patch"
     }
+  },
+  "engines": {
+    "node": ">=18.15.0"
   }
 }

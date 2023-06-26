@@ -1,14 +1,14 @@
 // import { withClerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { withMiddlewareAuthRequired } from '@auth0/nextjs-auth0/edge';
+// import type { NextRequest } from "next/server";
+import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
 
 // export default withClerkMiddleware((_req: NextRequest) => {
 //   return NextResponse.next();
 // });
 // Exports
 // ========================================================
-export default withMiddlewareAuthRequired(async (req: NextRequest) => {
+export default withMiddlewareAuthRequired(async () => {
   const res = NextResponse.next();
   return res;
 });

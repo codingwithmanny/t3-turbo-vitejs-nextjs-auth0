@@ -3,24 +3,29 @@
 import { appRouter, createContext } from "@acme/api";
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import cors from 'cors';
+import cors from "cors";
 
 // Config
 // ========================================================
 /**
- * 
+ *
  */
 const corsMiddleware = cors();
 
 /**
- * 
- * @param req 
- * @param res 
- * @param fn 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @param fn
+ * @returns
  */
-const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: typeof corsMiddleware) => {
+const runMiddleware = (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  fn: typeof corsMiddleware,
+) => {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
         return reject(result);
@@ -29,12 +34,12 @@ const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: typeof cor
       return resolve(result);
     });
   });
-}
+};
 
 /**
- * 
- * @param handler 
- * @returns 
+ *
+ * @param handler
+ * @returns
  */
 const withCors = (handler: NextApiHandler) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
@@ -47,10 +52,12 @@ const withCors = (handler: NextApiHandler) => {
 // Exports
 // ========================================================
 // export API handler
-export default withCors(createNextApiHandler({
-  router: appRouter,
-  createContext,
-}));
+export default withCors(
+  createNextApiHandler({
+    router: appRouter,
+    createContext,
+  }),
+);
 
 // If you need to enable cors, you can do so like this:
 // const handler = async (req: NextApiRequest, res: NextApiResponse) => {

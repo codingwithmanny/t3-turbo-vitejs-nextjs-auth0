@@ -16,9 +16,7 @@ import { toast } from "react-hot-toast";
  *
  * @returns
  */
-const AuthShowcase: React.FC<{ callback?: () => void }> = ({
-  callback = () => {},
-}) => {
+const AuthShowcase: React.FC<{ callback?: () => void }> = ({ callback }) => {
   // State / Props
   const [inputs, setInputs] = useState({
     title: "",
@@ -110,9 +108,9 @@ const AuthShowcase: React.FC<{ callback?: () => void }> = ({
                 </span>
               </p>
               <p>
-                <a type="button" href="/api/auth/logout">
+                <Link type="button" href="/api/auth/logout">
                   Logout
-                </a>
+                </Link>
               </p>
             </div>
           </div>

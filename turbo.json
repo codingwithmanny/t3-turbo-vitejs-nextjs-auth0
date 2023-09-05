@@ -1,20 +1,37 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
-    "db-generate": {
+    "actions:list": {},
+    "actions:create": {},
+    "actions:get": {},
+    "actions:test": {},
+    "actions:delete": {},
+    "triggers:list": {},
+    "triggers:bindings": {},
+    "triggers:update": {},
+    "triggers:remove": {},
+    "db:generate": {
       "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
-    "db-push": {
+    "db:migrate": {
+      "inputs": ["prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:push": {
+      "inputs": ["prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:studio": {
       "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^db-generate"],
+      "dependsOn": ["^db:generate"],
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build", "^db-generate"],
+      "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**", ".expo/**"]
     },
     "lint": {
@@ -27,7 +44,7 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^db-generate"],
+      "dependsOn": ["^db:generate"],
       "cache": false
     }
   },
@@ -36,6 +53,9 @@
     "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
     "AUTH0_SECRET",
     "AUTH0_AUDIENCE",
-    "TRPC_SERVER_URL"
+    "TRPC_SERVER_URL",
+    "AUTH0_DOMAIN",
+    "AUTH0_ISSUER_BASE_URL",
+    "AUTH0_MANAGEMENT_API_TOKEN"
   ]
 }

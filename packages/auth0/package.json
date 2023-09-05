@@ -1,0 +1,27 @@
+{
+  "name": "@acme/auth0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "with-env": "dotenv -e ../../.env --",
+    "actions:list": "pnpm with-env tsx actions/list.ts",
+    "actions:create": "pnpm with-env tsx actions/create.ts",
+    "actions:get": "pnpm with-env tsx actions/get.ts",
+    "actions:test": "pnpm with-env tsx actions/test.ts",
+    "actions:delete": "pnpm with-env tsx actions/delete.ts",
+    "triggers:list": "pnpm with-env tsx triggers/list.ts",
+    "triggers:bindings": "pnpm with-env tsx triggers/bindings.ts",
+    "triggers:update": "pnpm with-env tsx triggers/update.ts",
+    "triggers:remove": "pnpm with-env tsx triggers/remove.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv-cli": "^6.0.0",
+    "tsx": "^3.12.8",
+    "typescript": "^5.2.2"
+  }
+}
